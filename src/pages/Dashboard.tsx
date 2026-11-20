@@ -11,10 +11,16 @@ import { STAGES, type EventLog, type PStatus, type Stage } from '../types'
 
 const ranges = [['all', 'All time'], ['30', '30 days'], ['90', '90 days'], ['180', '6 months']] as const
 const STAGE_HEX: Record<Stage, string> = { New: '#0ea5e9', Contacted: '#6366f1', 'Water Report Received': '#8b5cf6', Quoted: '#f59e0b', Negotiation: '#f97316', Won: '#10b981', Lost: '#ef4444' }
-const BUILD: { key: PStatus; label: string; color: string }[] = [
-  { key: 'Order Confirmed', label: 'New order', color: '#38bdf8' }, { key: 'Procurement', label: 'Buying material', color: '#fbbf24' },
-  { key: 'In Production', label: 'Being built', color: '#a78bfa' }, { key: 'Ready for Dispatch', label: 'Ready to ship', color: '#34d399' },
+const BUILD: { key: PStatus; label: string }[] = [
+  { key: 'Order Confirmed', label: 'New order' }, { key: 'Procurement', label: 'Buying material' },
+  { key: 'In Production', label: 'Being built' }, { key: 'Ready for Dispatch', label: 'Ready to ship' },
 ]
+/* Factory live panel colours: graphite with brand-orange highlights. */
+const ft = {
+  bg: 'radial-gradient(460px 240px at 100% 0%, rgba(249,115,22,0.30), transparent 65%), linear-gradient(160deg, #18181b 0%, #232326 50%, #33333a 100%)',
+  shadow: 'rgba(24,24,27,0.8)', soft: '#e4e4e7', hi: ['#ffedd5', '#fb923c'] as const, stages: ['#e4e4e7', '#fbbf24', '#fb923c', '#4ade80'] as const,
+}
+
 const EVENT_ICON: Record<EventLog['kind'], { icon: typeof Inbox; tone: string }> = {
   inquiry: { icon: Inbox, tone: 'bg-sky-100 text-sky-600' }, quote: { icon: FileText, tone: 'bg-violet-100 text-violet-600' }, order: { icon: Rocket, tone: 'bg-brand-100 text-brand-700' },
   payment: { icon: Wallet, tone: 'bg-emerald-100 text-emerald-600' }, boq: { icon: ClipboardList, tone: 'bg-amber-100 text-amber-600' }, po: { icon: ShoppingCart, tone: 'bg-sky-100 text-sky-600' },
@@ -42,7 +48,7 @@ const Num = ({ value, fmt = (n: number) => n.toLocaleString('en-IN') }: { value:
 function GrowBar({ pct, from, to, h = 8 }: { pct: number; from: string; to: string; h?: number }) {
   const [on, setOn] = useState(false)
   useEffect(() => { const id = requestAnimationFrame(() => setOn(true)); return () => cancelAnimationFrame(id) }, [])
-  return <div className="overflow-hidden rounded-full bg-white/10" style={{ height: h }}><div className="h-full rounded-full" style={{ width: on ? `${Math.max(0, Math.min(100, pct))}%` : '0%', background: `linear-gradient(90deg, ${from}, ${to})`, boxShadow: `0 0 14px ${to}88`, transition: 'width 1.1s cubic-bezier(0.16,1,0.3,1)' }} /></div>
+  return <div className="overflow-hidden rounded-full bg-white/12" style={{ height: h }}><div className="h-full rounded-full" style={{ width: on ? `${Math.max(0, Math.min(100, pct))}%` : '0%', background: `linear-gradient(90deg, ${from}, ${to})`, boxShadow: `0 0 14px ${to}88`, transition: 'width 1.1s cubic-bezier(0.16,1,0.3,1)' }} /></div>
 }
 
 /** Tiny white trend line for coloured tiles. */
@@ -174,31 +180,33 @@ export default function Dashboard() {
 
       {/* Bento */}
       <div className="grid gap-4 xl:flex-1 xl:grid-cols-12">
-        {/* Factory live — the one dark panel */}
-        <section className="relative flex flex-col overflow-hidden rounded-3xl p-4 text-white shadow-[0_28px_56px_-24px_rgba(15,22,38,0.8)] xl:col-span-5 xl:row-span-2" style={{ background: 'radial-gradient(520px 260px at 100% 0%, rgba(237,115,51,0.35), transparent 65%), radial-gradient(420px 260px at 0% 100%, rgba(99,102,241,0.25), transparent 65%), linear-gradient(160deg, #111a2e, #0b1220)' }}>
-          <div className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} aria-hidden="true" />
-          <div className="relative flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-[17px] font-extrabold tracking-[-0.02em]"><Factory size={19} className="text-[#f58a4e]" /> Factory live</h2>
-            <span className="flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-bold tracking-wider text-emerald-300 ring-1 ring-emerald-400/30"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" /></span>LIVE</span>
+        {/* Factory live — graphite panel with brand-orange highlights */}
+        <section className="relative flex flex-col overflow-hidden rounded-3xl p-4 text-white transition-[background,box-shadow] duration-500 xl:col-span-5 xl:row-span-2" style={{ background: ft.bg, boxShadow: `0 28px 56px -24px ${ft.shadow}, inset 0 0 0 1px ${ft.soft}22` }}>
+          <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: `linear-gradient(115deg, transparent 40%, ${ft.soft}12 50%, transparent 60%)` }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-6 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${ft.soft}99, transparent)` }} aria-hidden="true" />
+          <div className="relative flex items-center justify-between gap-2">
+            <h2 className="flex items-center gap-2.5 text-[17px] font-extrabold tracking-[-0.02em]"><span className="grid h-8 w-8 place-items-center rounded-[10px]" style={{ background: `linear-gradient(135deg, ${ft.hi[0]}, ${ft.hi[1]})`, color: '#0f172a', boxShadow: `0 8px 18px -8px ${ft.hi[1]}` }}><Factory size={16} /></span>Factory live</h2>
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wider" style={{ color: ft.soft, background: `${ft.soft}1f`, boxShadow: `inset 0 0 0 1px ${ft.soft}55` }}><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" /></span>LIVE</span>
+            </div>
           </div>
           <div className="relative mt-3 grid grid-cols-3 gap-2.5">
             {[{ v: factory.length, l: factory.length === 1 ? 'Plant in work' : 'Plants in work', f: undefined }, { v: avgProg, l: 'Average done', f: (n: number) => `${n}%` }, { v: soon, l: 'Ship in 14 days', f: undefined }].map(x => (
-              <div key={x.l} className="rounded-2xl bg-white/[0.07] p-3 ring-1 ring-white/10"><div className="tnum text-[28px] leading-none font-extrabold tracking-[-0.03em]"><Num value={x.v} fmt={x.f} /></div><div className="mt-1 text-[11px] font-semibold text-white/60">{x.l}</div></div>))}
+              <div key={x.l} className="rounded-2xl p-3" style={{ background: `${ft.soft}14`, boxShadow: `inset 0 0 0 1px ${ft.soft}26` }}><div className="tnum bg-clip-text text-[28px] leading-none font-extrabold tracking-[-0.03em] text-transparent" style={{ backgroundImage: `linear-gradient(180deg, ${ft.hi[0]}, ${ft.hi[1]})` }}><Num value={x.v} fmt={x.f} /></div><div className="mt-1 text-[11px] font-semibold" style={{ color: `${ft.soft}bb` }}>{x.l}</div></div>))}
           </div>
           <ul className="relative mt-3 space-y-1.5">
-            {factory.map(p => { const st = BUILD.find(b => b.key === p.status)!, pg = progOf(p), left = daysBetween(today(), p.deliveryDate); return (
-              <li key={p.id}><Link to={`/projects/${p.id}`} className="group block rounded-xl px-2.5 py-2 transition-colors hover:bg-white/[0.06]">
-                <div className="flex items-center justify-between gap-3"><div className="min-w-0"><div className="truncate font-bold">{p.company}</div><div className="mt-0.5 flex items-center gap-2 text-[11px] text-white/60"><span className="h-2 w-2 rounded-full" style={{ background: st.color }} />{st.label} · {p.code}</div></div>
-                  <div className="shrink-0 text-right"><div className="tnum text-[20px] leading-none font-extrabold" style={{ color: st.color }}>{pg}%</div><div className={cx('mt-0.5 text-[11px] font-semibold', left < 0 ? 'text-rose-300' : 'text-white/55')}>{left < 0 ? `${-left}d late` : left === 0 ? 'Due today' : `${left}d left`}</div></div></div>
-                <div className="mt-2"><GrowBar pct={pg} from={st.color + 'aa'} to={st.color} h={6} /></div>
+            {factory.map(p => { const k = BUILD.findIndex(b => b.key === p.status), st = BUILD[k], c = ft.stages[k], pg = progOf(p), left = daysBetween(today(), p.deliveryDate); return (
+              <li key={p.id}><Link to={`/projects/${p.id}`} className="group block rounded-xl px-2.5 py-2 transition-colors hover:bg-white/[0.07]">
+                <div className="flex items-center justify-between gap-3"><div className="min-w-0"><div className="truncate font-bold">{p.company}</div><div className="mt-0.5 flex items-center gap-2 text-[11px]" style={{ color: `${ft.soft}aa` }}><span className="h-2 w-2 rounded-full" style={{ background: c }} />{st.label} · {p.code}</div></div>
+                  <div className="shrink-0 text-right"><div className="tnum text-[20px] leading-none font-extrabold" style={{ color: c }}>{pg}%</div><div className="mt-0.5 text-[11px] font-semibold" style={{ color: left < 0 ? '#fda4af' : `${ft.soft}99` }}>{left < 0 ? `${-left}d late` : left === 0 ? 'Due today' : `${left}d left`}</div></div></div>
+                <div className="mt-2"><GrowBar pct={pg} from={c + 'aa'} to={c} h={6} /></div>
               </Link></li>) })}
-            {!factory.length && <li className="rounded-2xl border border-dashed border-white/20 py-10 text-center text-sm text-white/50">No plants being built right now.</li>}
+            {!factory.length && <li className="rounded-2xl border border-dashed border-white/25 py-10 text-center text-sm text-white/60">No plants being built right now.</li>}
           </ul>
-          {/* Where every order sits, pinned to the bottom of the panel */}
           <div className="relative mt-auto pt-3">
-            <div className="mb-1.5 text-[11px] font-bold tracking-[0.14em] text-white/50 uppercase">Orders by stage</div>
-            <div className="flex h-2 overflow-hidden rounded-full bg-white/10">{BUILD.map(b => { const n = factory.filter(p => p.status === b.key).length; return n > 0 && <span key={b.key} className="h-full" style={{ flexGrow: n, flexBasis: 0, background: b.color }} /> })}</div>
-            <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">{BUILD.map(b => <div key={b.key} className="flex items-center justify-between text-[12px]"><span className="flex items-center gap-2 text-white/70"><span className="h-2 w-2 rounded-full" style={{ background: b.color }} />{b.label}</span><span className="tnum font-extrabold">{factory.filter(p => p.status === b.key).length}</span></div>)}</div>
+            <div className="mb-1.5 text-[11px] font-bold tracking-[0.14em] uppercase" style={{ color: `${ft.soft}99` }}>Orders by stage</div>
+            <div className="flex h-2 overflow-hidden rounded-full bg-white/12">{BUILD.map((b, k) => { const n = factory.filter(p => p.status === b.key).length; return n > 0 && <span key={b.key} className="h-full" style={{ flexGrow: n, flexBasis: 0, background: ft.stages[k] }} /> })}</div>
+            <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">{BUILD.map((b, k) => <div key={b.key} className="flex items-center justify-between text-[12px]"><span className="flex items-center gap-2" style={{ color: `${ft.soft}cc` }}><span className="h-2 w-2 rounded-full" style={{ background: ft.stages[k] }} />{b.label}</span><span className="tnum font-extrabold">{factory.filter(p => p.status === b.key).length}</span></div>)}</div>
           </div>
         </section>
 
