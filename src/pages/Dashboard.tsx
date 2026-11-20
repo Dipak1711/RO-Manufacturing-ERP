@@ -155,7 +155,7 @@ export default function Dashboard() {
   return (
     <>
       {/* The first screen: header, shortcuts and the live board fill exactly one viewport; everything else is below the fold. */}
-      <div className="flex flex-col xl:min-h-[calc(100vh-102px)]">
+      <div className="flex flex-col xl:min-h-[calc(100vh-118px)]">
       <div className="-mb-2"><PageHeader eyebrow={`${roleLabel[user!.role]} · ${fmtDate(today())}`} icon={<Gauge size={20} />} title={`${greet}, ${user!.name.split(' ')[0]}`}
         actions={<>
           <div className="flex rounded-xl bg-white p-0.5 shadow-flat">{ranges.map(([k, l]) => <button key={k} onClick={() => setRange(k)} className={cx('rounded-[10px] px-3 py-1.5 text-sm font-semibold transition-colors', range === k ? 'bg-linear-to-b from-[#f1823f] to-[#e0662a] text-white shadow-[0_6px_14px_-6px_rgba(237,115,51,0.7)]' : 'text-slate-500 hover:bg-slate-100 hover:text-ink')}>{l}</button>)}</div>
