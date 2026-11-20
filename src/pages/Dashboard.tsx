@@ -236,11 +236,12 @@ export default function Dashboard() {
                 <span className="flex h-2 items-center gap-1">{w.fu.length > 0 && <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />}{w.dl.length > 0 && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}{n === 0 && <span className={cx('h-1 w-3 rounded-full', day === w.k ? 'bg-white/40' : 'bg-slate-200')} />}</span>
               </button>) })}
           </div>
-          <ul className="space-y-0.5 px-3 pt-2.5 pb-3">
+          {/* Fixed height (room for 2 items + "more"), so picking a day never resizes this card or the tiles above it. */}
+          <ul className="flex h-[118px] flex-col gap-0.5 overflow-hidden px-3 pt-2.5 pb-3">
             {dayItems.slice(0, 2).map(x => (
               <li key={x.key}><Link to={x.to} className="group flex items-center gap-3 rounded-xl px-3 py-1 transition-colors hover:bg-brand-50/60"><span className={cx('shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold', x.tone)}>{x.label}</span><span className="min-w-0 flex-1"><span className="block truncate font-bold text-ink">{x.title}</span><span className="block truncate text-xs text-slate-500">{x.sub}</span></span><ChevronRight size={16} className="text-slate-300 transition-transform group-hover:translate-x-1" /></Link></li>))}
             {dayItems.length > 2 && <li className="px-3 text-xs font-semibold text-slate-400">+{dayItems.length - 2} more</li>}
-            {!dayItems.length && <li className="py-4 text-center text-sm text-slate-400">Nothing planned for this day.</li>}
+            {!dayItems.length && <li className="grid flex-1 place-items-center text-sm text-slate-400">Nothing planned for this day.</li>}
           </ul>
         </Card>
       </div>
