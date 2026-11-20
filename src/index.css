@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+/* ==================================================================
+   AQUAFLOW ERP — DESIGN SYSTEM
+   Visual language follows the reference ERP: white glass panels on a
+   softly tinted canvas, one confident burnt-orange primary, platinum
+   neutrals, and restrained status colour. Existing `brand-*`, `slate-*`
+   and `accent-*` utilities are re-pointed at this palette so every page
+   picks it up without changing its markup.
+   ================================================================== */
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Neutrals — cool platinum ramp (replaces Tailwind slate). */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f3f5f9;
+  --color-slate-200: #e5e9f0;
+  --color-slate-300: #d2d8e3;
+  --color-slate-400: #a7b0c0;
+  --color-slate-500: #667085;
+  --color-slate-600: #475467;
+  --color-slate-700: #2b3546;
+  --color-slate-800: #182031;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #080d17;
+
+  --color-ink: #0f172a;
+  --color-surface: #ffffff;
+
+  /* Primary — burnt orange. 600 is the action colour. */
+  --color-brand-50: #fff5ee;
+  --color-brand-100: #ffe6d4;
+  --color-brand-200: #fccba8;
+  --color-brand-300: #f8aa77;
+  --color-brand-400: #f28c4c;
+  --color-brand-500: #ed7333;
+  --color-brand-600: #df6527;
+  --color-brand-700: #c4531c;
+  --color-brand-800: #943f17;
+  --color-brand-900: #7a3616;
+
+  /* Accent — burnished amber for value and premium moments. */
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+
+  /* Elevation — hairline ring plus a soft, low-opacity shadow. */
+  --shadow-flat: 0 0 0 1px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 0 0 1px rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lift: 0 0 0 1px rgba(15, 23, 42, 0.05), 0 4px 8px -2px rgba(15, 23, 42, 0.06), 0 12px 24px -10px rgba(15, 23, 42, 0.14);
+  --shadow-panel: 0 0 0 1px rgba(15, 23, 42, 0.06), 0 10px 24px -8px rgba(15, 23, 42, 0.16), 0 20px 48px -16px rgba(15, 23, 42, 0.18);
+  --shadow-modal: 0 0 0 1px rgba(15, 23, 42, 0.08), 0 30px 70px -20px rgba(15, 23, 42, 0.4);
+
+  /* Motion — decelerating curves only. */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-fade-in: fade-in 200ms var(--ease-out-quart) both;
+  --animate-slide-up: rise 240ms var(--ease-out-expo) both;
+  --animate-pop-in: pop-in 200ms var(--ease-out-expo) both;
+  --animate-pulse-ring: pulse-ring 2000ms var(--ease-out-quart) infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                          */
+/* ------------------------------------------------------------------ */
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+/* Ends on `none` (not translateY(0)) so a finished entrance never becomes a
+   containing block for descendant position:fixed modals. */
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px) scale(0.985) }
+  60% { opacity: 1 }
+  to { opacity: 1; transform: translateY(0) scale(1) }
+}
+@keyframes pop-in { from { opacity: 0; transform: translateY(-6px) scale(0.97) } to { opacity: 1; transform: translateY(0) scale(1) } }
+@keyframes row-in { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+@keyframes hero-sweep {
+  0% { transform: translateX(0) skewX(-12deg); opacity: 0 }
+  15% { opacity: 1 }
+  55%, 100% { transform: translateX(560%) skewX(-12deg); opacity: 0 }
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(223, 101, 39, 0.45) }
+  70% { box-shadow: 0 0 0 8px rgba(223, 101, 39, 0) }
+  100% { box-shadow: 0 0 0 0 rgba(223, 101, 39, 0) }
+}
+@keyframes drop-settle {
+  0% { scale: 1.04; box-shadow: 0 0 0 3px color-mix(in srgb, var(--settle, #ed7333) 60%, transparent), 0 16px 30px -8px color-mix(in srgb, var(--settle, #ed7333) 50%, transparent) }
+  100% { scale: 1; box-shadow: 0 0 0 0 transparent }
+}
+@keyframes drop-shake {
+  0%, 100% { transform: translateX(0); box-shadow: 0 0 0 0 transparent }
+  15% { transform: translateX(-7px); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5) }
+  35% { transform: translateX(6px) }
+  55% { transform: translateX(-4px) }
+  75% { transform: translateX(2px) }
+}
+@keyframes slot-open {
+  from { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; margin-bottom: -10px }
+  to { max-height: 90px; opacity: 1 }
+}
+@keyframes confetti {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1 }
+  100% { transform: translate(var(--dx), calc(var(--dy) + 60px)) rotate(var(--rot)); opacity: 0 }
+}
+@keyframes count-bump { 0% { scale: 0.6 } 60% { scale: 1.2 } 100% { scale: 1 } }
+@keyframes dash-draw { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+@keyframes shimmer { to { background-position: -200% 0 } }
+@keyframes shake {
+  0%, 100% { transform: translateX(0) }
+  20% { transform: translateX(-5px) }
+  40% { transform: translateX(4px) }
+  60% { transform: translateX(-3px) }
+  80% { transform: translateX(2px) }
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                               */
+/* ------------------------------------------------------------------ */
+:root { color-scheme: light; }
+* { border-color: var(--color-slate-200); }
+html, body, #root { height: 100%; }
+html { overflow-y: scroll; -webkit-text-size-adjust: 100%; }
+body { overscroll-behavior-y: none; }
+body {
+  margin: 0;
+  background-color: var(--color-slate-100);
+  color: var(--color-slate-900);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* The application canvas: a dotted field tinted with four soft pools of
+   colour, so white panels read as sitting on something. */
+.app-canvas {
+  background-color: var(--color-slate-100);
+  isolation: isolate;
+}
+/* The dotted, tinted backdrop lives on its own fixed layer: it is painted once and
+   composited by the GPU, so scrolling never has to repaint it. */
+.app-canvas::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(15, 23, 42, 0.055) 1px, transparent 1px),
+    radial-gradient(900px 520px at 0% -10%, rgba(237, 115, 51, 0.10), transparent 66%),
+    radial-gradient(800px 520px at 100% -8%, rgba(59, 130, 246, 0.10), transparent 64%),
+    radial-gradient(800px 560px at 100% 105%, rgba(139, 92, 246, 0.07), transparent 68%),
+    radial-gradient(700px 520px at 0% 105%, rgba(20, 184, 166, 0.07), transparent 68%);
+  background-size: 22px 22px, auto, auto, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  transform: translateZ(0);
+}
+
+.sidebar-chrome {
+  background-color: var(--color-surface);
+  background-image:
+    radial-gradient(360px 220px at 0% 0%, rgba(237, 115, 51, 0.07), transparent 70%),
+    linear-gradient(180deg, var(--color-surface) 0%, var(--color-slate-50) 100%);
+}
+.sidebar-chrome a:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7); }
+
+.tnum, table, input[type="number"] { font-variant-numeric: tabular-nums; }
+::selection { background: var(--color-brand-200); color: var(--color-slate-950); }
+:focus-visible { outline: 2px solid var(--color-brand-600); outline-offset: 2px; border-radius: 6px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-slate-300); border-radius: 9999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-slate-400); background-clip: content-box; }
+
+/* Surface sheen overlay for dark hero chrome. */
+.sheen {
+  background-image:
+    radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.16) 0%, transparent 55%),
+    radial-gradient(100% 100% at 100% 0%, rgba(237, 115, 51, 0.35) 0%, transparent 60%);
+}
+
+/* A soft light sweep across solid buttons on hover. */
+.btn-sheen { overflow: hidden; isolation: isolate; }
+.btn-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.28) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-slate-200) 25%, var(--color-slate-100) 50%, var(--color-slate-200) 75%);
+  background-size: 200% 100%;
+  border-radius: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Form + table primitives used across pages                          */
+/* ------------------------------------------------------------------ */
+.inp { @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none hover:border-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-50 disabled:text-slate-500; }
+.lbl { @apply mb-1 block text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500; }
+.th { @apply px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500; }
+.td { @apply px-4 py-3.5 text-sm text-slate-700; }
+
+/* ------------------------------------------------------------------ */
+/* Printed documents always render on a light, neutral token set      */
+/* ------------------------------------------------------------------ */
+.print-doc { font-family: "Plus Jakarta Sans", sans-serif; color: #111; font-size: 12px; line-height: 1.45; }
+.print-doc table { border-collapse: collapse; width: 100%; }
+.print-doc th, .print-doc td { border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left; vertical-align: top; }
+.print-doc th { background: #fdeee3; font-weight: 600; }
+.print-doc h3 { font-size: 13px; font-weight: 700; margin: 14px 0 6px; color: #943f17; text-transform: uppercase; letter-spacing: .04em; }
+
+#print-root { display: none; }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: white; }
+  #root { display: none !important; }
+  #print-root { display: block !important; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion — opt-in, so visitors who ask for less get a static design  */
+/* ------------------------------------------------------------------ */
+.fade-in { animation: fade-up 260ms var(--ease-out-quint) both; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lift { transition: transform 160ms var(--ease-out-quart), box-shadow 160ms var(--ease-out-quart); }
+  .lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+  .pressable {
+    transition: transform 120ms var(--ease-out-quart), box-shadow 150ms var(--ease-out-quart), background-color 150ms var(--ease-out-quart), color 150ms var(--ease-out-quart), border-color 150ms var(--ease-out-quart);
+  }
+  .pressable:active:not(:disabled) { transform: scale(0.98); }
+  .page-enter { animation: fade-up 240ms var(--ease-out-quint) both; }
+  .page-enter > * { animation: fade-up 420ms var(--ease-out-expo) both; }
+  .page-enter > :nth-child(2) { animation-delay: 60ms; }
+  .page-enter > :nth-child(3) { animation-delay: 120ms; }
+  .page-enter > :nth-child(4) { animation-delay: 180ms; }
+  .page-enter > :nth-child(5) { animation-delay: 240ms; }
+  .page-enter > :nth-child(n + 6) { animation-delay: 300ms; }
+  select, input:not([type="range"]), textarea {
+    transition: border-color 150ms var(--ease-out-quart), box-shadow 150ms var(--ease-out-quart), background-color 150ms var(--ease-out-quart);
+  }
+  tbody > tr { animation: row-in 320ms var(--ease-out-expo) both; transition: background-color 130ms var(--ease-out-quart); }
+  tbody > tr:nth-child(2) { animation-delay: 30ms; }
+  tbody > tr:nth-child(3) { animation-delay: 60ms; }
+  tbody > tr:nth-child(4) { animation-delay: 90ms; }
+  tbody > tr:nth-child(5) { animation-delay: 120ms; }
+  tbody > tr:nth-child(6) { animation-delay: 150ms; }
+  tbody > tr:nth-child(n + 7) { animation-delay: 180ms; }
+  .drop-settle { animation: drop-settle 800ms var(--ease-out-expo) both; }
+  .drop-shake { animation: drop-shake 520ms var(--ease-out-quart) both; }
+  .slot-open { animation: slot-open 280ms var(--ease-out-expo) both; overflow: hidden; }
+  .confetti-bit { animation: confetti 950ms cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
+  .count-bump { animation: count-bump 380ms var(--ease-out-expo) both; }
+  .field-error { animation: fade-up 220ms var(--ease-out-expo) both; }
+  .dash-draw { animation: dash-draw 1.4s var(--ease-out-quart) both; }
+  .hero-sweep { animation: hero-sweep 7s var(--ease-out-quart) 1.5s infinite; will-change: transform; }
+  .btn-sheen:hover::after { transform: translateX(120%); transition: transform 650ms var(--ease-out-quart); }
+  .skeleton { animation: shimmer 1.4s linear infinite; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

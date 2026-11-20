@@ -1,0 +1,16 @@
+# Installed packages (recreated with `npm install`)
+node_modules/
+
+# Build output and caches
+dist/
+.vite/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor files
+.DS_Store
+.vscode/
+.idea/
